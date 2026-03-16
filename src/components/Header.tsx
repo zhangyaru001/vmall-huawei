@@ -4,8 +4,6 @@ import {
   SearchOutlined,
   ShoppingCartOutlined,
   UserOutlined,
-  MenuOutlined,
-  HomeOutlined
 } from '@ant-design/icons';
 import { Link, useNavigate } from 'react-router-dom';
 import type { MenuProps } from 'antd';

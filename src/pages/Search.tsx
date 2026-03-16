@@ -1,8 +1,9 @@
 import { useState, useEffect } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import { Layout, Row, Col, Card, Typography, Empty, Button, Rate, Tag, Space } from 'antd';
-import { ShoppingCartOutlined, HeartOutlined } from '@ant-design/icons';
-import { products, Product } from '../data/products';
+import { ShoppingCartOutlined } from '@ant-design/icons';
+import { products } from '../data/products';
+import type { Product } from '../data/products';
 
 const { Content } = Layout;
 const { Title, Text, Paragraph } = Typography;

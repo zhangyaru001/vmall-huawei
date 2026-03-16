@@ -5,8 +5,9 @@ import {
   ShoppingOutlined,
   HeartOutlined,
 } from '@ant-design/icons';
-import { Link, useNavigate } from 'react-router-dom';
-import { products, Product } from '../data/products';
+import { useNavigate } from 'react-router-dom';
+import { products } from '../data/products';
+import type { Product } from '../data/products';
 
 const { Content } = Layout;
 const { Title, Text } = Typography;

@@ -1,4 +1,3 @@
-import { useState, useEffect } from 'react';
 import { Layout, Carousel, Row, Col, Card, Typography, Tag, Button, Space, Rate, Tabs, Flex } from 'antd';
 import {
   RightOutlined,
@@ -7,7 +6,8 @@ import {
   ThunderboltOutlined,
 } from '@ant-design/icons';
 import { Link, useNavigate } from 'react-router-dom';
-import { products, banners, categories, Product } from '../data/products';
+import { products, banners, categories } from '../data/products';
+import type { Product } from '../data/products';
 
 const { Content } = Layout;
 const { Title, Text, Paragraph } = Typography;
@@ -44,12 +44,6 @@ const sectionTitleStyle: React.CSSProperties = {
 
 export default function Home() {
   const navigate = useNavigate();
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    const timer = setTimeout(() => setLoading(false), 500);
-    return () => clearTimeout(timer);
-  }, []);
 
   const handleProductClick = (product: Product) => {
     navigate(`/product/${product.id}`);

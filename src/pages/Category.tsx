@@ -7,7 +7,8 @@ import {
   ShoppingCartOutlined,
   HeartOutlined,
 } from '@ant-design/icons';
-import { products, Product } from '../data/products';
+import { products } from '../data/products';
+import type { Product } from '../data/products';
 
 const { Content } = Layout;
 const { Title, Text, Paragraph } = Typography;
