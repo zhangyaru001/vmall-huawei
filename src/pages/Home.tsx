@@ -174,7 +174,7 @@ export default function Home() {
   return (
     <Content style={{ background: '#f5f5f5', minHeight: '100vh' }}>
       {/* Banner Carousel */}
-      <Carousel autoplay effect="fade" style={bannerStyle}>
+      <Carousel autoplay arrows dots={{ className: 'banner-dots' }} style={bannerStyle}>
         {banners.map((banner) => (
           <div key={banner.id}>
             <div
