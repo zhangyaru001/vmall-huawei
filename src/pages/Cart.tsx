@@ -1,90 +1,62 @@
-import { useState } from 'react';
 import { Layout, Table, Card, Typography, Button, InputNumber, Space, Row, Col, Divider, Empty, Checkbox, message } from 'antd';
+import type { ColumnsType } from 'antd/es/table';
 import {
   DeleteOutlined,
   ShoppingOutlined,
   HeartOutlined,
 } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
-import { products } from '../data/products';
-import type { Product } from '../data/products';
+import { useCart, type CartItem } from '../context/CartContext';
 
 const { Content } = Layout;
 const { Title, Text } = Typography;
 
-interface CartItem extends Product {
-  quantity: number;
-  selected: boolean;
-}
-
-const initialCartItems: CartItem[] = [
-  { ...products[0], quantity: 1, selected: true },
-  { ...products[2], quantity: 2, selected: true },
-  { ...products[4], quantity: 1, selected: false },
-];
-
 export default function Cart() {
   const navigate = useNavigate();
-  const [cartItems, setCartItems] = useState<CartItem[]>(initialCartItems);
-  const [selectAll, setSelectAll] = useState(true);
+  const {
+    items,
+    updateQuantity,
+    removeItem,
+    toggleSelect,
+    toggleSelectAll,
+    getSelectedItems,
+    getTotalPrice,
+    getTotalSaving,
+  } = useCart();
 
-  const handleQuantityChange = (id: number, quantity: number) => {
-    setCartItems(items =>
-      items.map(item =>
-        item.id === id ? { ...item, quantity } : item
-      )
-    );
-  };
+  const selectedItems = getSelectedItems();
+  const totalPrice = getTotalPrice();
+  const totalSaving = getTotalSaving();
 
-  const handleSelect = (id: number, checked: boolean) => {
-    setCartItems(items =>
-      items.map(item =>
-        item.id === id ? { ...item, selected: checked } : item
-      )
-    );
-  };
+  const selectAll = items.length > 0 && items.every(item => item.selected);
 
   const handleSelectAll = (checked: boolean) => {
-    setSelectAll(checked);
-    setCartItems(items =>
-      items.map(item => ({ ...item, selected: checked }))
-    );
+    toggleSelectAll(checked);
   };
 
   const handleDelete = (id: number) => {
-    setCartItems(items => items.filter(item => item.id !== id));
-    message.success('已从购物车移除');
+    removeItem(id);
   };
 
   const handleCheckout = () => {
-    const selectedItems = cartItems.filter(item => item.selected);
-    if (selectedItems.length === 0) {
+    const selected = getSelectedItems();
+    if (selected.length === 0) {
       message.warning('请选择要结算的商品');
       return;
     }
     message.success('正在跳转到结算页面...');
   };
 
-  const selectedItems = cartItems.filter(item => item.selected);
-  const totalPrice = selectedItems.reduce(
-    (sum, item) => sum + item.price * item.quantity,
-    0
-  );
-  const totalSaving = selectedItems.reduce(
-    (sum, item) => sum + (item.originalPrice - item.price) * item.quantity,
-    0
-  );
-
-  const columns = [
+  const columns: ColumnsType<CartItem> = [
     {
       title: '商品信息',
       dataIndex: 'name',
       key: 'name',
-      render: (_: any, record: CartItem) => (
+      render: (_: unknown, record: CartItem) => (
         <Space>
           <Checkbox
             checked={record.selected}
-            onChange={(e) => handleSelect(record.id, e.target.checked)}
+            onChange={() => toggleSelect(record.id)}
           />
           <img
             src={record.image}
@@ -93,7 +65,7 @@ export default function Cart() {
           />
           <div>
             <div style={{ fontWeight: 500 }}>{record.name}</div>
-            <Text type="secondary" style={{ fontSize: 12 }}>{record.description}</Text>
+            <Text type="secondary" style={{ fontSize: 12 }}>{record.selectedSpec}</Text>
           </div>
         </Space>
       ),
@@ -103,7 +75,7 @@ export default function Cart() {
       dataIndex: 'price',
       key: 'price',
       width: 150,
-      render: (_: any, record: CartItem) => (
+      render: (_: unknown, record: CartItem) => (
         <Space direction="vertical" size={0}>
           <Text style={{ color: '#cf0a2c', fontSize: 16, fontWeight: 'bold' }}>
             ¥{record.price}
@@ -121,12 +93,12 @@ export default function Cart() {
       dataIndex: 'quantity',
       key: 'quantity',
       width: 150,
-      render: (_: any, record: CartItem) => (
+      render: (_: unknown, record: CartItem) => (
         <InputNumber
           min={1}
           max={10}
           value={record.quantity}
-          onChange={(value) => handleQuantityChange(record.id, value || 1)}
+          onChange={(value) => updateQuantity(record.id, value || 1)}
           style={{ width: 80 }}
         />
       ),
@@ -135,7 +107,7 @@ export default function Cart() {
       title: '小计',
       key: 'subtotal',
       width: 150,
-      render: (_: any, record: CartItem) => (
+      render: (_: unknown, record: CartItem) => (
         <Text style={{ color: '#cf0a2c', fontSize: 16, fontWeight: 'bold' }}>
           ¥{record.price * record.quantity}
         </Text>
@@ -145,7 +117,7 @@ export default function Cart() {
       title: '操作',
       key: 'action',
       width: 100,
-      render: (_: any, record: CartItem) => (
+      render: (_: unknown, record: CartItem) => (
         <Space direction="vertical">
           <Button
             type="link"
@@ -175,7 +147,7 @@ export default function Cart() {
         <Title level={3} style={{ margin: 0 }}>购物车</Title>
       </div>
 
-      {cartItems.length === 0 ? (
+      {items.length === 0 ? (
         <div style={{ padding: '100px 40px' }}>
           <Empty
             image={<ShoppingOutlined style={{ fontSize: 80, color: '#ccc' }} />}
@@ -205,7 +177,7 @@ export default function Cart() {
                 </div>
                 <Table
                   columns={columns}
-                  dataSource={cartItems}
+                  dataSource={items}
                   rowKey="id"
                   pagination={false}
                   bordered={false}

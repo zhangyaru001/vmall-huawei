@@ -7,6 +7,7 @@ import {
 } from '@ant-design/icons';
 import { Link, useNavigate } from 'react-router-dom';
 import type { MenuProps } from 'antd';
+import { useCart } from '../context/CartContext';
 
 const { Header } = Layout;
 
@@ -54,7 +55,9 @@ const userMenuItems: MenuProps['items'] = [
 
 export default function HeaderComponent() {
   const navigate = useNavigate();
+  const { getTotalCount } = useCart();
   const [searchValue, setSearchValue] = useState('');
+  const cartCount = getTotalCount();
 
   const handleSearch = () => {
     if (searchValue) {
@@ -93,7 +96,7 @@ export default function HeaderComponent() {
             onPressEnter={handleSearch}
           />
           
-          <Badge count={0} showZero={false}>
+          <Badge count={cartCount} showZero={true}>
             <Button 
               type="text" 
               icon={<ShoppingCartOutlined style={{ fontSize: 22 }} />}

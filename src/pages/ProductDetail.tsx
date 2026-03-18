@@ -1,15 +1,15 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
-import { Layout, Row, Col, Card, Typography, Button, Space, Tag, Radio, message, Breadcrumb, Divider, InputNumber, Rate } from 'antd';
+import { Layout, Row, Col, Card, Typography, Button, Space, Tag, Radio, Breadcrumb, Divider, InputNumber, Rate } from 'antd';
 import {
   ShoppingCartOutlined,
-  HeartOutlined,
   ShareAltOutlined,
   CheckCircleOutlined,
   CarOutlined,
 } from '@ant-design/icons';
 import { products } from '../data/products';
 import type { Product } from '../data/products';
+import { useCart } from '../context/CartContext';
 
 const { Content } = Layout;
 const { Title, Text, Paragraph } = Typography;
@@ -17,6 +17,7 @@ const { Title, Text, Paragraph } = Typography;
 export default function ProductDetail() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const { addItem } = useCart();
   const [product, setProduct] = useState<Product | null>(null);
   const [selectedSpec, setSelectedSpec] = useState<string>('');
   const [quantity, setQuantity] = useState(1);
@@ -41,7 +42,16 @@ export default function ProductDetail() {
   }
 
   const handleAddToCart = () => {
-    message.success(`已添加 ${product.name} x${quantity} 到购物车`);
+    if (product) {
+      addItem(product, quantity, selectedSpec);
+    }
+  };
+
+  const handleBuyNow = () => {
+    if (product) {
+      addItem(product, quantity, selectedSpec);
+      navigate('/cart');
+    }
   };
 
   return (
@@ -165,16 +175,17 @@ export default function ProductDetail() {
                     height: 50,
                     fontSize: 16
                   }}
-                  onClick={handleAddToCart}
+                  onClick={handleBuyNow}
                 >
                   立即购买
                 </Button>
                 <Button
                   size="large"
-                  icon={<HeartOutlined />}
+                  icon={<ShoppingCartOutlined />}
                   style={{ padding: '0 30px', height: 50, fontSize: 16 }}
+                  onClick={handleAddToCart}
                 >
-                  加入心愿单
+                  加入购物车
                 </Button>
                 <Button
                   size="large"

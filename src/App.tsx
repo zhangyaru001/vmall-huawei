@@ -1,5 +1,6 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { ConfigProvider } from "antd";
+import { CartProvider } from "./context/CartContext";
 import Header from "./components/Header";
 import Footer from "./components/Footer";
 import Home from "./pages/Home";
@@ -19,7 +20,8 @@ const theme = {
 function App() {
   return (
     <ConfigProvider theme={theme}>
-      <Router>
+      <CartProvider>
+        <Router>
         <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
           <Header />
           <div style={{ flex: 1 }}>
@@ -34,6 +36,7 @@ function App() {
           <Footer />
         </div>
       </Router>
+      </CartProvider>
     </ConfigProvider>
   );
 }
